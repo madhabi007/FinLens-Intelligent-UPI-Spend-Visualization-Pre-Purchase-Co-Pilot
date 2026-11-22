@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <title>FinLens — See. Understand. Spend Smarter.</title>
+  <meta name="description" content="One spending app with three lenses: spend heat map, AI money coach, and AR price scanner.">
+  <meta name="theme-color" content="#192823">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-content">
+    <div class="loading-logo">FinLens</div>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+    <p class="loading-text">Loading 6-month authentic UPI ledger...</p>
+  </div>
+</div>
+
+<div class="app-shell" id="appShell" style="display:none;">
+
+  <!-- Top Header -->
+  <header class="top-header">
+    <div class="brand-section">
+      <div class="brand-logo">FinLens</div>
+      <span class="brand-tagline hide-mobile">See. Understand. Spend Smarter.</span>
+    </div>
+    <div class="header-actions">
+      <!-- Public URL Sharing Pill -->
+      <button class="share-device-btn" id="shareDeviceBtn" title="Open on Any Phone / Device">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        <span>Open on Phone</span>
+      </button>
+
+      <!-- User Profile Badge -->
+      <button class="user-badge" id="userMenuBtn" aria-label="Account Settings">
+        <span class="user-avatar" id="userAvatarText">MC</span>
+        <span class="hide-mobile" id="userNameLabel">Madhabi C.</span>
+      </button>
+
+      <!-- Theme Toggle -->
+      <button class="btn-icon" id="themeToggleBtn" title="Toggle Theme" aria-label="Toggle dark mode">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </button>
+
+      <!-- Settings -->
+      <button class="btn-icon" id="settingsModalBtn" title="Settings" aria-label="Open settings">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- =================================================================
+       TAB 1: SPEND HEAT MAP
+       Includes its own clean summary banner, rhythm toggle & category filters
+       ================================================================= -->
+  <main class="tab-panel" id="panelHeatmap" role="tabpanel">
+    <!-- 6-Month Summary Banner (Home / Heatmap Tab Only) -->
+    <section class="summary-banner" aria-label="Spend Summary">
+      <div class="summary-stat">
+        <span class="stat-label">Total Outflow (Sent)</span>
+        <div class="stat-value"><span id="statSent">₹3,42,251</span><span class="stat-sub warning" id="statPeriodLabel">6 Months</span></div>
+      </div>
+      <div class="summary-stat">
+        <span class="stat-label">Total Inflow (Received)</span>
+        <div class="stat-value"><span id="statReceived">₹3,16,415</span><span class="stat-sub positive">Salary &amp; P2P</span></div>
+      </div>
+      <div class="summary-stat">
+        <span class="stat-label">Top Location</span>
+        <div class="stat-value"><span id="statTopLoc">Kothrud, Pune</span></div>
+      </div>
+      <div class="summary-stat">
+        <span class="stat-label">Peak Rhythm</span>
+        <div class="stat-value"><span id="statPeakRhythm">Fri 8–10 pm</span></div>
+      </div>
+    </section>
+
+    <!-- Single Clean Filter Control Bar (Specific to Heatmap) -->
+    <div class="heatmap-filter-bar">
+      <!-- Rhythm Segmented Control -->
+      <div class="segmented-control" role="tablist" aria-label="View rhythm">
+        <button class="seg-item" id="segWeekRhythm" role="tab" aria-selected="true">Week rhythm</button>
+        <button class="seg-item" id="segCalendar" role="tab" aria-selected="false">Calendar</button>
+      </div>
+
+      <!-- Category Filter Chips -->
+      <div class="category-chips-list" id="categoryChipsList" role="group" aria-label="Category filters">
+        <button class="cat-chip" data-cat="All" aria-pressed="true">All</button>
+        <button class="cat-chip" data-cat="Food Delivery" aria-pressed="false">Food delivery</button>
+        <button class="cat-chip" data-cat="Groceries" aria-pressed="false">Groceries</button>
+        <button class="cat-chip" data-cat="Dining/Café" aria-pressed="false">Dining/Café</button>
+        <button class="cat-chip" data-cat="Transport" aria-pressed="false">Transport</button>
+        <button class="cat-chip" data-cat="Shopping" aria-pressed="false">Shopping</button>
+        <button class="cat-chip" data-cat="Travel" aria-pressed="false">Travel</button>
+        <button class="cat-chip" data-cat="Health" aria-pressed="false">Health</button>
+        <button class="cat-chip" data-cat="Fun" aria-pressed="false">Fun</button>
+        <button class="cat-chip" data-cat="Bills/Utilities" aria-pressed="false">Bills &amp; Utilities</button>
+      </div>
+
+      <!-- Filter Settings Modal Trigger -->
+      <button class="filter-action-btn" id="openFilterModalBtn" aria-label="Open filter settings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        <span>Filters</span>
+        <span class="filter-badge" id="filterCountBadge" hidden>0</span>
+      </button>
+    </div>
+
+    <!-- Active Filters Strip (Only appears when non-default filter is applied) -->
+    <div class="active-filters-strip" id="activeFiltersStrip" hidden>
+      <span class="active-filter-label">Active:</span>
+      <div class="active-filter-pills" id="activeFilterPills"></div>
+      <button class="clear-all-pill" id="quickClearFiltersBtn">Clear all</button>
+    </div>
+
+    <!-- Main Heatmap Grid Card -->
+    <div class="heatmap-card">
+      <div class="heatmap-headline-row">
+        <div class="heatmap-headline" id="heatmapHeadline">
+          <b>Friday 8–10 pm</b> is your costliest recurring slot, 3.1× the typical slot.
+        </div>
+      </div>
+
+      <!-- Heat Grid View (Unified UI for Week Rhythm and Calendar) -->
+      <div class="heatmap-grid-scroller">
+        <div class="heatmap-table" id="heatTableWrap"></div>
+      </div>
+
+      <div class="heat-legend">
+        <span>₹0 Low</span>
+        <div class="heat-legend-bar"></div>
+        <span id="heatMaxLabel">₹2,400+ Peak</span>
+      </div>
+    </div>
+
+    <!-- Spending Breakdown -->
+    <div class="card">
+      <h3 class="card-title" id="breakdownSectionTitle">Spending breakdown</h3>
+      <div class="breakdown-list" id="weeklyBreakdownList"></div>
+    </div>
+
+    <!-- Cell Drilldown -->
+    <div class="card" id="cellDrilldownCard">
+      <h3 class="card-title" id="drilldownTitle">Selected Time Slot</h3>
+      <p class="card-hint" id="drilldownSub">Tap any grid cell to view matching UPI transactions</p>
+      <div class="drilldown-tx-list" id="drilldownList"></div>
+    </div>
+  </main>
+
+  <!-- =================================================================
+       TAB 2: GEOGRAPHIC SPENDING MAP
+       Dedicated location controls: City switcher, Google Maps API canvas, and Area Inspector
+       NO heatmap filters or clutter!
+       ================================================================= -->
+  <section class="tab-panel" id="panelGeomap" role="tabpanel" hidden>
+    <div class="geomap-container">
+      <div class="geomap-header">
+        <div class="geomap-title-box">
+          <h2 class="geomap-title">Geographic Spend Distribution</h2>
+          <span class="geomap-sub">Google Maps visualization grounded in 720 authentic UPI transactions across Pune &amp; Delhi NCR.</span>
+        </div>
+        <div class="geomap-quick-locs">
+          <button class="loc-btn active" data-loc="all">All India</button>
+          <button class="loc-btn" data-loc="pune">Pune</button>
+          <button class="loc-btn" data-loc="delhi">Delhi NCR</button>
+        </div>
+      </div>
+      <div class="map-wrapper">
+        <div id="geoMap" style="width:100%;height:100%;"></div>
+        <div class="map-inspector" id="mapInspector">
+          <div class="inspector-title">
+            <span id="inspAreaName">Kothrud, Pune</span>
+            <span class="inspector-stat" id="inspTotalSpend">₹1,85,420</span>
+          </div>
+          <div class="inspector-meta" id="inspMeta">Tap any map hotspot to inspect area spending</div>
+          <div class="inspector-merchants" id="inspMerchants"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================================
+       TAB 3: PRE-PURCHASE SCANNER & AFFORDABILITY CHECKER
+       Scan UPI QR, receipt, or check an amount before paying.
+       Dedicated UI — No summary banner, No heatmap filters!
+       ================================================================= -->
+  <section class="tab-panel" id="panelScanner" role="tabpanel" hidden>
+    <div class="scanner-header-card">
+      <div class="scanner-header-info">
+        <h2 class="scanner-header-title">Pre-Purchase Lens &amp; UPI Scanner</h2>
+        <p class="scanner-header-sub">Scan a merchant UPI QR, bill, or product before paying to instantly check remaining budget &amp; affordability.</p>
+      </div>
+      <div class="scanner-status-indicator">
+        <span class="live-pulse-dot"></span>
+        <span id="scannerStatusText">Scanner Active</span>
+      </div>
+    </div>
+
+    <div class="scanner-layout">
+      <!-- Left Column: Viewfinder & Camera Controls -->
+      <div class="scanner-viewfinder-column">
+        <div class="scanner-viewfinder-card" id="viewfinderCard">
+          <!-- Real Video Stream -->
+          <video class="scanner-video-feed" id="scannerVideoFeed" playsinline autoplay muted style="display:none;"></video>
+          <canvas id="scannerCanvas" style="display:none;"></canvas>
+          
+          <!-- Viewfinder Graphic / Standee Container -->
+          <div class="viewfinder-media" id="viewfinderMedia">
+            <!-- Simulated UPI QR Standee (Active when camera is off or preset selected) -->
+            <div class="simulated-qr-stage" id="simulatedQrStage">
+              <div class="qr-standee-card">
+                <div class="qr-standee-header">
+                  <span class="qr-upi-badge">BHARAT UPI QR</span>
+                  <span class="qr-merchant-name" id="scannedMerchantName">Third Wave Coffee</span>
+                </div>
+                <!-- Real styled QR visual -->
+                <div class="qr-code-box">
+                  <svg class="qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" fill="#FFFFFF" rx="6"/>
+                    <!-- QR Finder Patterns -->
+                    <rect x="8" y="8" width="26" height="26" fill="#1C2024" rx="3"/>
+                    <rect x="13" y="13" width="16" height="16" fill="#FFFFFF"/>
+                    <rect x="17" y="17" width="8" height="8" fill="#1C2024"/>
+
+                    <rect x="66" y="8" width="26" height="26" fill="#1C2024" rx="3"/>
+                    <rect x="71" y="13" width="16" height="16" fill="#FFFFFF"/>
+                    <rect x="75" y="17" width="8" height="8" fill="#1C2024"/>
+
+                    <rect x="8" y="66" width="26" height="26" fill="#1C2024" rx="3"/>
+                    <rect x="13" y="71" width="16" height="16" fill="#FFFFFF"/>
+                    <rect x="17" y="75" width="8" height="8" fill="#1C2024"/>
+                    <!-- Data points -->
+                    <rect x="42" y="12" width="6" height="6" fill="#1C2024"/>
+                    <rect x="52" y="18" width="6" height="6" fill="#1C2024"/>
+                    <rect x="42" y="28" width="6" height="6" fill="#1C2024"/>
+                    <rect x="12" y="42" width="6" height="6" fill="#1C2024"/>
+                    <rect x="24" y="48" width="6" height="6" fill="#1C2024"/>
+                    <rect x="42" y="42" width="16" height="16" fill="#2A9D8F" rx="3"/>
+                    <rect x="68" y="42" width="6" height="6" fill="#1C2024"/>
+                    <rect x="80" y="48" width="6" height="6" fill="#1C2024"/>
+                    <rect x="42" y="68" width="6" height="6" fill="#1C2024"/>
+                    <rect x="54" y="76" width="6" height="6" fill="#1C2024"/>
+                    <rect x="74" y="68" width="6" height="6" fill="#1C2024"/>
+                    <rect x="82" y="82" width="6" height="6" fill="#1C2024"/>
+                  </svg>
+                </div>
+                <div class="qr-standee-vpa" id="scannedMerchantVpa">thirdwave@icici</div>
+                <div class="qr-standee-amount-pill">
+                  <span>Pay Amount:</span>
+                  <strong id="scannedItemPriceText">₹380</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Animated Laser Scanner HUD -->
+          <div class="scanner-hud-overlay">
+            <div class="scanner-corner corner-tl"></div>
+            <div class="scanner-corner corner-tr"></div>
+            <div class="scanner-corner corner-bl"></div>
+            <div class="scanner-corner corner-br"></div>
+            <div class="scanner-laser-line"></div>
+          </div>
+
+          <!-- Floating Detected Tag Pill on Viewfinder -->
+          <div class="product-target-box">
+            <div class="target-tag-pill">
+              <div class="target-tag-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="target-tag-content">
+                <span class="target-product-name" id="targetProductName">Third Wave Coffee</span>
+                <span class="target-product-price" id="targetProductPrice">₹380</span>
+              </div>
+              <span class="target-budget-badge" id="targetBudgetBadge">Safe (14% weekly)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera Controls Strip -->
+        <div class="viewfinder-controls-bar">
+          <button class="cam-ctrl-btn" id="btnToggleCamera">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <span id="camBtnLabel">Start Camera</span>
+          </button>
+          <button class="cam-ctrl-btn" id="btnFlipCamera" title="Switch Front/Rear Camera">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 2.21 1.05 4.18 2.68 5.48"></path><polyline points="1 10 5 10 5 6"></polyline><path d="M4 14c0 4.418 3.582 8 8 8s8-3.582 8-8c0-2.21-1.05-4.18-2.68-5.48"></path><polyline points="23 14 19 14 19 18"></polyline></svg>
+            <span>Flip</span>
+          </button>
+          <label class="cam-ctrl-btn" id="btnUploadQrLabel" title="Upload QR / Receipt Image" for="scannerFileInput">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Upload QR / Bill</span>
+          </label>
+          <input type="file" id="scannerFileInput" accept="image/*" style="display:none;">
+        </div>
+
+        <!-- 1-Tap UPI Test Scenarios (Directly from User's 6-Month Real UPI Statement) -->
+        <div class="scanner-scenarios-card">
+          <span class="scenarios-title">Quick Test Merchant QRs (from your 6-month ledger):</span>
+          <div class="scanner-presets" id="scannerPresetsGroup">
+            <button class="scenario-chip active" data-preset="coffee">☕ Third Wave (₹380)</button>
+            <button class="scenario-chip" data-preset="blinkit">🛒 Blinkit (₹849)</button>
+            <button class="scenario-chip" data-preset="decathlon">🛍️ Decathlon (₹2,199)</button>
+            <button class="scenario-chip" data-preset="uber">🚕 Uber Ride (₹340)</button>
+            <button class="scenario-chip" data-preset="swiggy">🍕 Swiggy (₹620)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Instant Financial Intelligence & Affordability Output -->
+      <div class="scanner-analysis-column">
+        <!-- Live Decision Card -->
+        <div class="affordability-card" id="affordabilityCard">
+          <div class="affordability-header">
+            <div class="afford-merchant-info">
+              <span class="afford-cat-tag" id="affordCatTag">Dining &amp; Café</span>
+              <h3 class="afford-merchant-title" id="affordMerchantTitle">Third Wave Coffee</h3>
+              <span class="afford-vpa" id="affordVpa">thirdwave@icici</span>
+            </div>
+            <div class="afford-amount-box">
+              <span class="afford-amount-label">Purchase Price</span>
+              <span class="afford-amount-val" id="affordAmountVal">₹380</span>
+            </div>
+          </div>
+
+          <!-- Affordability Verdict Indicator -->
+          <div class="verdict-banner success" id="affordVerdictBanner">
+            <div class="verdict-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="verdict-text-box">
+              <strong id="affordVerdictHeadline">Safe to Spend · Within Weekly Allowance</strong>
+              <p id="affordVerdictDetail">Consumes 14% of your remaining weekly Dining &amp; Café budget (₹2,720 remaining).</p>
+            </div>
+          </div>
+
+          <!-- Real Dynamic Budget Barometer -->
+          <div class="budget-barometer-box">
+            <div class="barometer-labels">
+              <span id="barometerCatLabel">Category Monthly Budget (Dining)</span>
+              <span class="barometer-nums" id="barometerNums">₹8,140 / ₹11,000 (74%)</span>
+            </div>
+            <div class="barometer-track">
+              <div class="barometer-fill-spent" id="barometerSpentFill" style="width: 74%;"></div>
+              <div class="barometer-fill-new" id="barometerNewFill" style="width: 3.5%;"></div>
+            </div>
+            <div class="barometer-legend">
+              <span class="legend-dot spent" id="barometerSpentLegend">Spent: ₹8,140</span>
+              <span class="legend-dot new-spend" id="barometerNewLegend">+₹380 this spend</span>
+              <span class="legend-dot remaining" id="barometerRemainingLabel">₹2,480 left</span>
+            </div>
+          </div>
+
+          <!-- Real Statement History with this Merchant -->
+          <div class="merchant-history-card">
+            <div class="history-card-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span>Your 6-Month Ledger History</span>
+            </div>
+            <div class="history-metrics-grid">
+              <div class="history-metric">
+                <span class="h-label">Total Visits</span>
+                <span class="h-val" id="historyVisitsCount">14 times</span>
+              </div>
+              <div class="history-metric">
+                <span class="h-label">Total Spent</span>
+                <span class="h-val" id="historyTotalSpent">₹5,180</span>
+              </div>
+              <div class="history-metric">
+                <span class="h-label">Avg Order</span>
+                <span class="h-val" id="historyAvgOrder">₹370</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Micro Nudge -->
+          <div class="scanner-smart-nudge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <p id="scannerSmartNudgeText">Tip: You're on track to save ₹6,200 this month. This coffee is safe, but consider skipping evening snacks to maintain your buffer.</p>
+          </div>
+
+          <!-- Direct Payment Actions -->
+          <div class="afford-action-row">
+            <a class="btn-primary afford-pay-btn" id="btnPayUpiNow" href="upi://pay?pa=thirdwave@icici&pn=ThirdWaveCoffee&am=380&cu=INR">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              <span>Proceed to Pay (UPI)</span>
+            </a>
+            <button class="cat-chip" id="btnCopyUpiId">Copy UPI ID</button>
+          </div>
+        </div>
+
+        <!-- Manual Quick-Check Form -->
+        <div class="manual-check-card">
+          <h4 class="manual-check-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Or Check Any Custom Amount Before Paying</span>
+          </h4>
+          <form class="manual-check-form" id="manualCheckForm">
+            <div class="manual-inputs-row">
+              <div class="input-col merchant-col">
+                <label for="customMerchantInput">Merchant / Store</label>
+                <input type="text" id="customMerchantInput" placeholder="e.g. Zara, Starbucks, Zepto" list="merchantsDatalist" required>
+                <datalist id="merchantsDatalist"></datalist>
+              </div>
+              <div class="input-col amount-col">
+                <label for="customAmountInput">Amount (₹)</label>
+                <input type="number" id="customAmountInput" placeholder="Amount" min="1" required>
+              </div>
+              <div class="input-col cat-col">
+                <label for="customCategorySelect">Category</label>
+                <select id="customCategorySelect">
+                  <option value="Dining/Café">Dining/Café</option>
+                  <option value="Groceries">Groceries</option>
+                  <option value="Food Delivery">Food Delivery</option>
+                  <option value="Shopping">Shopping</option>
+                  <option value="Transport">Transport</option>
+                  <option value="Travel">Travel</option>
+                  <option value="Health">Health</option>
+                  <option value="Fun">Fun</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn-check-custom">Run Affordability Check</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================================
+       TAB 4: AI MONEY COACH
+       Dedicated Conversational AI Interface — Distinct, Clean, Full-Height
+       NO summary banner, NO heatmap filters!
+       ================================================================= -->
+  <section class="tab-panel" id="panelCoach" role="tabpanel" hidden>
+    <div class="coach-header-card">
+      <div class="coach-header-info">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="coach-avatar-badge">FL</div>
+          <h2 class="coach-header-title">FinLens AI Money Coach</h2>
+        </div>
+        <p class="coach-header-sub">Trained deterministically on your 6-month statement (720 UPI transactions · ₹3,42,251 outflow).</p>
+      </div>
+      <div class="coach-header-actions">
+        <span class="coach-header-badge">April – Sept 2026 Grounded</span>
+        <button class="coach-clear-btn" id="btnCoachClearChat" title="Reset Chat Conversation">Clear Chat</button>
+      </div>
+    </div>
+
+    <div class="coach-container">
+      <!-- Conversational Chat Stream -->
+      <div class="coach-chat-box" id="coachChatBox" aria-live="polite">
+        <!-- Welcoming Assistant Message -->
+        <div class="chat-message assistant">
+          <div class="msg-avatar">FL</div>
+          <div class="msg-content">
+            <p>👋 Hi Madhabi! I’m your <strong>FinLens Money Coach</strong>, grounded directly in your <strong>6-month UPI ledger (720 transactions)</strong>.</p>
+            <p style="margin-top:6px;">You can ask me about your spending leaks, compare cities (Pune vs Delhi), check if you can afford upcoming trips, or see exact merchant breakdowns.</p>
+          </div>
+        </div>
+
+        <div class="chat-message user">
+          <div class="msg-avatar">MC</div>
+          <div class="msg-content">Can I afford a trip to Manali in March?</div>
+        </div>
+
+        <div class="chat-message assistant">
+          <div class="msg-avatar">FL</div>
+          <div class="msg-content">
+            <p>Let's check your financial capacity.</p>
+            <p>Based on your 6-month average monthly cash flow and take-home income (₹65,000), <strong>you can comfortably afford a trip to Manali in March</strong> — provided your discretionary food &amp; online orders stay below 20% of income.</p>
+            
+            <div class="donut-breakdown-card">
+              <div class="donut-graphic"><div class="donut-inner-hole"></div></div>
+              <div class="donut-details">
+                <div class="donut-meta-row"><span>Estimated Trip Cost</span><span class="donut-meta-val">₹18,000 – ₹22,000</span></div>
+                <div class="donut-meta-row mint"><span>Your Safe Discretionary Cap</span><span class="donut-meta-val">₹21,500</span></div>
+                <div class="donut-meta-row"><span>Monthly Savings Buffer</span><span class="donut-meta-val">+₹6,400</span></div>
+              </div>
+            </div>
+
+            <div class="coach-result-label">Actionable verdict:</div>
+            <div class="status-pills-row">
+              <span class="coach-status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> Feasible &amp; Approved</span>
+              <span class="coach-status-pill notice"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Keep food orders &lt; ₹5,000/mo</span>
+              <span class="coach-status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> No debt needed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Organized Quick Prompts (Categorized into tabs/groups) -->
+      <div class="coach-prompts-wrapper">
+        <span class="prompts-sub-title">Suggested questions from your ledger:</span>
+        <div class="coach-quick-prompts" id="coachQuickPrompts">
+          <button class="cat-chip" data-prompt="Summary of my full 6-month spend?">📊 6-Month Summary</button>
+          <button class="cat-chip" data-prompt="When do I overspend on weekends?">🌙 Weekend Night Overspends</button>
+          <button class="cat-chip" data-prompt="What if I halve my Zepto & Swiggy orders?">🛒 Halve Zepto &amp; Swiggy</button>
+          <button class="cat-chip" data-prompt="How much did I spend in Delhi vs Pune?">🏙️ Delhi vs Pune Spend</button>
+          <button class="cat-chip" data-prompt="Show me only Instamart transactions">⚡ Instamart Deep Dive</button>
+          <button class="cat-chip" data-prompt="How can I save ₹15,000 every month?">💰 Save ₹15,000/Month</button>
+          <button class="cat-chip" data-prompt="What is my largest single transaction?">🔍 Largest Single Spend</button>
+        </div>
+      </div>
+
+      <!-- Coach Input Bar -->
+      <form class="coach-input-form" id="coachInputForm">
+        <input class="coach-text-input" id="coachTextInput" type="text" placeholder="Ask anything about your 720 transactions, merchants, or budget..." autocomplete="off">
+        <button class="btn-mic" type="button" id="coachVoiceMicBtn" title="Speak question" aria-label="Microphone">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+        </button>
+        <button class="btn-send" type="submit" id="btnCoachSend">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <span>Ask</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <span>FinLens · 6-Month UPI Spend Intelligence</span>
+    <div class="footer-links">
+      <a href="#" id="linkPrivacyPolicy">Privacy Policy</a>
+      <a href="#" id="linkTermsOfService">Terms &amp; Conditions</a>
+      <a href="#" id="linkDataExport">Export 6-Month Data</a>
+    </div>
+  </footer>
+</div>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-nav-bar" role="tablist" aria-label="Main Navigation">
+  <button class="nav-item" role="tab" id="navTabHome" data-panel="panelHeatmap" aria-selected="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    <span>Home</span>
+  </button>
+  <button class="nav-item" role="tab" id="navTabMap" data-panel="panelGeomap" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+    <span>Geo Map</span>
+  </button>
+  <button class="nav-item" role="tab" id="navTabScanner" data-panel="panelScanner" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+    <span>Scanner</span>
+  </button>
+  <button class="nav-item" role="tab" id="navTabCoach" data-panel="panelCoach" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    <span>Coach</span>
+  </button>
+</nav>
+
+<!-- =================================================================
+     DEDICATED FILTER SETTINGS MODAL / BOTTOM SHEET
+     ================================================================= -->
+<div class="modal-overlay" id="filterSettingsModal">
+  <div class="modal-window filter-sheet-window">
+    <div class="modal-header-row">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        <h3 class="modal-headline">Filter Spending</h3>
+      </div>
+      <button class="modal-close-btn" data-close-modal="filterSettingsModal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+
+    <div class="filter-sheet-body">
+      <!-- 1. Search Merchant / Payee -->
+      <div class="sheet-section">
+        <label class="sheet-label">Search Payee or Merchant</label>
+        <div class="sheet-search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" class="sheet-input" id="sheetSearchInput" placeholder="e.g. Instamart, Zepto, KFC, Swiggy...">
+        </div>
+        <div class="quick-tags-row">
+          <span class="quick-tag-label">Quick:</span>
+          <button class="quick-tag-btn" data-query="Instamart">Instamart</button>
+          <button class="quick-tag-btn" data-query="Zepto">Zepto</button>
+          <button class="quick-tag-btn" data-query="Swiggy">Swiggy</button>
+          <button class="quick-tag-btn" data-query="KFC">KFC</button>
+          <button class="quick-tag-btn" data-query="Cleartrip">Cleartrip</button>
+        </div>
+      </div>
+
+      <!-- 2. Date Range Presets across 6 months -->
+      <div class="sheet-section">
+        <label class="sheet-label">Date Range (6 Months Available)</label>
+        <div class="pill-group" id="datePresetPills">
+          <button class="choice-pill active" data-preset="all">Full 6 Months (Apr–Sep)</button>
+          <button class="choice-pill" data-preset="q2">Q2 (Apr–Jun)</button>
+          <button class="choice-pill" data-preset="q3">Q3 (Jul–Sep)</button>
+          <button class="choice-pill" data-preset="custom">Custom</button>
+        </div>
+        <div class="custom-dates-row" id="customDatesRow" style="display:none;margin-top:10px;">
+          <div class="date-field">
+            <span class="field-sub">From</span>
+            <input type="date" class="sheet-input" id="sheetDateFrom" value="2026-04-01">
+          </div>
+          <span style="color:var(--ink-muted);padding-top:18px;">–</span>
+          <div class="date-field">
+            <span class="field-sub">To</span>
+            <input type="date" class="sheet-input" id="sheetDateTo" value="2026-09-30">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. City / Region -->
+      <div class="sheet-section">
+        <label class="sheet-label">City / Region</label>
+        <div class="pill-group" id="cityPresetPills">
+          <button class="choice-pill active" data-city="All">All Cities</button>
+          <button class="choice-pill" data-city="Pune">Pune</button>
+          <button class="choice-pill" data-city="Delhi NCR">Delhi NCR</button>
+        </div>
+      </div>
+
+      <!-- 4. Amount Range -->
+      <div class="sheet-section">
+        <label class="sheet-label">Amount Range</label>
+        <div class="pill-group" id="amtPresetPills">
+          <button class="choice-pill active" data-amt="all">Any Amount</button>
+          <button class="choice-pill" data-amt="micro">&lt; ₹500</button>
+          <button class="choice-pill" data-amt="mid">₹500 – ₹2,000</button>
+          <button class="choice-pill" data-amt="high">₹2,000+</button>
+          <button class="choice-pill" data-amt="custom">Custom</button>
+        </div>
+        <div class="custom-amt-row" id="customAmtRow" style="display:none;margin-top:10px;">
+          <input type="number" class="sheet-input" id="sheetAmtMin" placeholder="Min ₹">
+          <span style="color:var(--ink-muted);">–</span>
+          <input type="number" class="sheet-input" id="sheetAmtMax" placeholder="Max ₹">
+        </div>
+      </div>
+
+      <!-- 5. Transaction Flow -->
+      <div class="sheet-section">
+        <label class="sheet-label">Transaction Flow</label>
+        <div class="pill-group" id="typePresetPills">
+          <button class="choice-pill active" data-type="debit">Sent Only (Outflow)</button>
+          <button class="choice-pill" data-type="credit">Received (Inflow)</button>
+          <button class="choice-pill" data-type="all">All Flows</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheet Sticky Footer -->
+    <div class="filter-sheet-footer">
+      <button class="sheet-reset-btn" id="sheetResetBtn">Reset all</button>
+      <button class="sheet-apply-btn" id="sheetApplyBtn">
+        <span>Apply Filters</span>
+        <span class="sheet-match-count" id="sheetMatchCount">720 tx</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- =================================================================
+     DIRECT PUBLIC LINK MODAL (Works on Any Phone / Any Device Worldwide)
+     ================================================================= -->
+<div class="modal-overlay" id="shareDeviceModal">
+  <div class="modal-window">
+    <div class="modal-header-row">
+      <h3 class="modal-headline">Open on Any Device</h3>
+      <button class="modal-close-btn" data-close-modal="shareDeviceModal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+    <div class="share-modal-body">
+      <p style="font-size:13.5px;color:var(--ink-secondary);">Open this link directly in your phone's browser (Safari or Chrome) — works over 4G/5G mobile data or any Wi-Fi without needing passwords or the same network:</p>
+
+      <div class="device-link-card" style="border-color: var(--brand-green); background: var(--brand-green-light);">
+        <span class="device-link-type" style="color: var(--brand-green);">Global Public HTTPS Link (Any Phone or Computer)</span>
+        <div class="link-copy-box">
+          <input type="text" readonly class="share-url-input" id="globalTunnelUrlInput" value="https://added-bills-attachments-bless.trycloudflare.com">
+          <button class="btn-copy" data-target="globalTunnelUrlInput">Copy</button>
+        </div>
+        <div class="device-hint" style="color: var(--brand-green);">Tap Copy and paste into Safari / Chrome on your phone to explore live!</div>
+      </div>
+
+      <div class="device-link-card">
+        <span class="device-link-type">Local Network Alternative (Same Wi-Fi)</span>
+        <div class="link-copy-box">
+          <input type="text" readonly class="share-url-input" id="localIpUrlInput" value="http://10.34.155.147:3000">
+          <button class="btn-copy" data-target="localIpUrlInput">Copy</button>
+        </div>
+        <div class="device-hint">Accessible when your device is on the same local Wi-Fi.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AUTH -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-window">
+    <div class="modal-header-row">
+      <h3 class="modal-headline">Account &amp; Sign In</h3>
+      <button class="modal-close-btn" data-close-modal="authModal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+    <div class="active-user-card">
+      <div><strong id="modalUserEmail">madhabichowdhury215@gmail.com</strong><div class="active-user-meta" id="modalUserMeta">720 UPI transactions loaded</div></div>
+      <button class="cat-chip" id="btnSignOut" style="padding:4px 10px;">Sign out</button>
+    </div>
+    <form id="authForm" class="auth-form">
+      <h4 class="auth-form-title">Create Private Account</h4>
+      <div class="form-group"><label class="form-label" for="authEmailInput">Email address</label><input class="form-input" id="authEmailInput" type="email" placeholder="you@domain.com" required></div>
+      <div class="form-group"><label class="form-label" for="authPasswordInput">Password (min 6 chars)</label><input class="form-input" id="authPasswordInput" type="password" placeholder="Enter password" required></div>
+      <div class="auth-actions">
+        <button class="btn-primary" type="submit" id="btnSubmitRegister" style="flex:1;">Create Account</button>
+        <button class="cat-chip" type="button" id="btnSubmitLogin" style="flex:1;text-align:center;justify-content:center;">Sign In</button>
+      </div>
+    </form>
+    <div class="auth-footer">
+      <button class="btn-danger-text" id="btnDeleteAccount">Wipe Data &amp; Delete Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PRIVACY -->
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal-window">
+    <div class="modal-header-row"><h3 class="modal-headline">Privacy &amp; Data Protection</h3><button class="modal-close-btn" data-close-modal="privacyModal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+    <div class="legal-text-content">
+      <p><strong>Last Updated: October 2026</strong></p>
+      <h4>1. Strict User-Level Data Isolation</h4><p>Financial transactions are strictly isolated per user in private server storage. One user cannot view or query another user's financial ledger.</p>
+      <h4>2. Zero Model Training</h4><p>Your financial statements are never used to train external AI models. All analytics are computed deterministically.</p>
+      <h4>3. Complete Erasure</h4><p>You can export your complete history or initiate permanent account deletion from Settings.</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: TERMS -->
+<div class="modal-overlay" id="termsModal">
+  <div class="modal-window">
+    <div class="modal-header-row"><h3 class="modal-headline">Terms and Conditions</h3><button class="modal-close-btn" data-close-modal="termsModal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+    <div class="legal-text-content">
+      <h4>1. Financial Decision Support</h4><p>FinLens is a decision-support, visualization, and budgeting intelligence tool. Recommendations and feasibility estimates provided by the AI Money Coach or AR Scanner are calculations based on your ledger data and do not constitute certified financial advice.</p>
+      <h4>2. Safe Account Credentials</h4><p>Users are responsible for keeping passwords confidential. FinLens hashes passwords using salted PBKDF2.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Google Maps JavaScript API with provided Key -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq8nq_YgPkbyXtu-p3Gx6a_DxjNgxm5IA&libraries=visualization"></script>
+<script src="app.js"></script>
+</body>
+</html>

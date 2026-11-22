@@ -1,0 +1,20 @@
+{
+  "name": "finlens",
+  "version": "1.0.0",
+  "description": "FinLens: Combined Heat Map, AI Coach and AR Scanner",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "fintech",
+    "budgeting",
+    "heatmap",
+    "threejs",
+    "ar-scanner",
+    "ai-coach"
+  ],
+  "author": "FinLens Team",
+  "license": "MIT"
+}

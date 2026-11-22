@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Binaries & Tunnels
+cloudflared.exe
+*.exe
+*.zip
+mingit/
+
+# Logs & System artifacts
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.local
+
+# User data isolation (Keep structure, ignore live user profiles)
+data/users/*
+!data/users/.gitkeep
