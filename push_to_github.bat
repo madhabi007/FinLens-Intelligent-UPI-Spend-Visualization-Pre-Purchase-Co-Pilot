@@ -7,46 +7,44 @@ echo   FinLens - Automatic GitHub Deployment Script
 echo ===================================================
 echo.
 
-where git >nul 2>nul
-if %errorlevel% neq 0 (
-    echo [!] Git is not installed or not in PATH.
-    echo [*] Installing Git for Windows via winget...
-    winget install --id Git.Git -e --source winget
-    echo.
-    echo [*] Git installed! Please close and re-open this script.
-    pause
-    exit /b
+set "GIT_CMD=.\mingit\cmd\git.exe"
+
+if not exist "%GIT_CMD%" (
+    where git >nul 2>nul
+    if %errorlevel% neq 0 (
+        echo [!] Git not found.
+        pause
+        exit /b
+    )
+    set "GIT_CMD=git"
 )
 
-echo [*] Initializing Git repository...
-git init
+echo [*] Checking local repository...
+"%GIT_CMD%" init
+"%GIT_CMD%" config user.name "Madhabi Chowdhury"
+"%GIT_CMD%" config user.email "madhabichowdhury215@gmail.com"
+"%GIT_CMD%" add .
+"%GIT_CMD%" commit -m "feat: complete FinLens UPI Spend Intelligence & Scanner platform" 2>nul
+"%GIT_CMD%" branch -M main
 
-echo [*] Staging all project files...
-git add .
+echo [*] Setting remote repository origin...
+"%GIT_CMD%" remote remove origin 2>nul
+"%GIT_CMD%" remote add origin https://github.com/madhabi007/FinLens-Intelligent-UPI-Spend-Visualization-Pre-Purchase-Co-Pilot.git
 
-echo [*] Creating commit...
-git commit -m "feat: FinLens UPI Spend Visualization, Pre-Purchase Scanner & PRD Documentation"
-
-echo [*] Setting branch to main...
-git branch -M main
-
-echo [*] Connecting to your GitHub repository...
-git remote remove origin >nul 2>nul
-git remote add origin https://github.com/madhabi007/FinLens-Intelligent-UPI-Spend-Visualization-Pre-Purchase-Co-Pilot.git
-
-echo [*] Pushing code to GitHub...
-git push -u origin main
+echo.
+echo [*] Pushing to GitHub (Sign in via your browser if prompted)...
+"%GIT_CMD%" push -u origin main
 
 if %errorlevel% neq 0 (
     echo.
-    echo [*] Standard push failed (likely remote contains initial README). Trying rebase pull...
-    git pull origin main --rebase
-    git push -u origin main
+    echo [*] If remote had existing commits, attempting rebase push...
+    "%GIT_CMD%" pull origin main --rebase
+    "%GIT_CMD%" push -u origin main
 )
 
 echo.
 echo ===================================================
-echo   SUCCESS! FinLens is now live on your GitHub:
+echo   Finished! Refresh your GitHub page:
 echo   https://github.com/madhabi007/FinLens-Intelligent-UPI-Spend-Visualization-Pre-Purchase-Co-Pilot
 echo ===================================================
 echo.
