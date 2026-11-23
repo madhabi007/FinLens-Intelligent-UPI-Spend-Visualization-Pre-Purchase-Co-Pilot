@@ -77,7 +77,7 @@
       }
 
       if (!data || !data.transactions || data.transactions.length === 0) {
-        const res = await fetch('/data/madhabi_upi.json');
+        const res = await fetch('./data/madhabi_upi.json');
         data = await res.json();
       }
 
